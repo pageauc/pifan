@@ -39,6 +39,7 @@ then to one side of approx 100 - 200 ohm resistor. Other side of resistor is con
 pin specifed by the BCM fan_GPIO variable below.
 This pin turns the fan on/off based on appropriate setpoint temperatures.
 
+```
 Wiring Diagram
                  fan
    +5V ----------[x]--------NPN------------ GPIO gnd pin
@@ -46,10 +47,11 @@ Wiring Diagram
   +3.3V                      |
    pin                       $ approx 100-200 ohm resistor
                              |
-                             | yellow (non black or red)
+                             | yellow (non black or red wire)
                              |
                             GPIO
                          control pin
+```
  
 ### How to Create a Systemd Service
  
