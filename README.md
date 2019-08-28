@@ -30,7 +30,7 @@ I wrote a simple pifand.py to be used as a daemon.  This can be installed as a s
 I used female jumper wires and cut one end off
 
 The RED fan wire is connected directly to a 3.3v or 5v gpio pin.
-[See gpio diagram for locations](https://www.raspberrypi.org/documentation/usage/gpio/)
+See [GPIO diagram](https://www.raspberrypi.org/documentation/usage/gpio/) for pin locations
 also [Interactive pinout diagram](http://pinout.xyz/)
 
 The BLACK Fan wire connects directly to one side of npn transistor.
