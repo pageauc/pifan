@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="11.5"
+ver="1.0"
 progName=$(basename -- "$0")
 PROG_DIR='pifan'  # Default folder install location
 
@@ -50,6 +50,8 @@ for fname in "${progFiles[@]}" ; do
     fi
 done
 
+chmod +x cpu-temp.py pifan.py pifand.py
+
 echo "INFO  : $STATUS Install Support Files  Wait ..."
 sudo apt-get install -yq stress
 sudo apt-get install -yq htop
@@ -71,7 +73,7 @@ Minimal Instructions:
 1 - It is suggested you run sudo apt-get update and sudo apt-get upgrade
     Reboot RPI if there are significant Raspbian system updates.
 2 - If config.py already exists then latest file is config.py.new
-3 - To Test Run pifan after installing NPN transitor assembly
+3 - To Test Run pifan.py after installing the NPN transitor fan switch assembly
     execute the following commands in RPI SSH or terminal session.
 
     cd ~/pifan

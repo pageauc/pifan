@@ -65,7 +65,9 @@ See [Interactive pinout diagram](http://pinout.xyz/) for pin details.
 Default control pin is BCM 25.  I used pin 4 for 5v power and pin 5 for ground.
 They are beside each other so easier to locate.
 
-#### pifan.py Features
+### pifan.py Features
+As a programming excercise I wrote some extra ***pifand.py*** features that
+may not necessariy be functionally required.
 
 * logging library for messaging.  This also allows redirecting output to a file.
 * argparse library implemented to allow changing some parameters from command line
@@ -74,9 +76,10 @@ They are beside each other so easier to locate.
 * A dictionary is used to store default variables and values.  This can
 be used to check missing config.py settings or can replace importing from config.py
 
-#### pifand.py
-I wrote pifand.py to be used as a daemon.  This can be installed as a systemd service.
-per instructions below.  Note the differences between the pifan.py and pifand.py scripts.
+### pifand.py
+I wrote pifand.py to be used as a systemd service daemon.  The file can be run as a
+background task or installed as a systemd service per instructions below.
+Note the differences between the pifan.py and pifand.py scripts.
 Both do the same job but pifand.py is very minimalistic.
 
 ### Testing
