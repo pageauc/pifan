@@ -1,0 +1,14 @@
+[Unit]
+Description=run fan when hot
+After=meadiacenter.service
+
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/bin/python /home/pi/pifan/pifand.py
+Restart=Always
+# On OSMC use Restart=on-failure instead of Restart=Always
+
+[Install]
+WantedBy=multi-user.target
