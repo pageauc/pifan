@@ -25,7 +25,7 @@ importing from a config.py file if it exists (default install).
 
 For details see https://github.com/pageauc/pifan
 """
-prog_ver = 'ver 1.3'
+prog_ver = 'ver 1.4'
 
 # Dictionary of configuration settings variables
 # will be superceded by config.py import or
@@ -182,7 +182,8 @@ if args.status:
                 logging.warn('User Pressed cntrl-c to Exit Fan Status Checking')
                 break
         elif usage == 1:  # Set for GPIO.IN
-            logging.warn('Fan Control is NOT Active. GPIO pin {} is NOT set as GPIO.OUT'.format(fan_GPIO))
+            logging.warn('Fan Control is NOT Active. GPIO pin {} is NOT set as GPIO.OUT'
+                         .format(fan_GPIO))
             logging.info('Install/Start pifand.service or start fan control script pifan.py or pifand.py')
             logging.info('eg sudo systemctl start pifand.service')
             break
@@ -193,8 +194,17 @@ if args.status:
 # Setup pin designated by fan_GPIO variable above
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)   # set mode for GPIO numbering scheme
-GPIO.setup(fan_GPIO, GPIO.OUT)  # sends signal to npn transistor center lead
+usage = GPIO.gpio_function(fan_GPIO)
+if usage == 0:  # Set for GPIO.OUT
+    logging.warn('BCM pin {} In Use. Fan Control is Already Active Somewhere Else'.format(fan_GPIO))
+    logging.warn('pifand.service, pifand.py or pifan.py may be running.')
+    logging.info('Check PID with command: pgrep -fa fan')
+    logging.info('Check Fan Status with command: ./{} --status'.format(prog_name))
+    print('{} {}'.format(prog_name, prog_ver))
+    print('Bye ...')
+    sys.exit(0)
 
+GPIO.setup(fan_GPIO, GPIO.OUT)  # sends signal to npn transistor center lead
 if args.fanmode == 'on':
     GPIO.output(fan_GPIO, True)
     logging.info('{} -f {} Option Selected. Forced Fan ON and Exit'.format(
