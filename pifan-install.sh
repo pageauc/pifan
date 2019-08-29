@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="1.0"
+ver="1.3"
 progName=$(basename -- "$0")
 PROG_DIR='pifan'  # Default folder install location
 
@@ -31,11 +31,11 @@ INFO  : $progName $ver  written by Claude Pageau
 # check if this is an upgrade and bypass update of configuration files
 if $is_upgrade ; then
   progFiles=("pifan.py" "pifand.py" "cpu-temp.py" \
-"pifand.service" "README.md")
+"chkpins.py" "pifand.service" "README.md")
   wget -O config.py.new -q https://raw.github.com/pageauc/pifan/master/config.py
 else   # New Install
   progFiles=("config.py" "pifan.py" "pifand.py" "cpu-temp.py" \
-"pifand.service" "README.md")
+"chkpins.py" "pifand.service" "README.md")
 fi
 
 for fname in "${progFiles[@]}" ; do
@@ -50,7 +50,7 @@ for fname in "${progFiles[@]}" ; do
     fi
 done
 
-chmod +x cpu-temp.py pifan.py pifand.py
+chmod +x cpu-temp.py pifan.py pifand.py chkpins.py
 
 echo "INFO  : $STATUS Install Support Files  Wait ..."
 sudo apt-get install -yq stress

@@ -76,6 +76,25 @@ may not necessariy be functionally required.
 * A dictionary is used to store default variables and values.  This can
 be used to check missing config.py settings or can replace importing from config.py
 
+program optional arguments
+
+usage: pifan.py [-h] [-f {on,off,auto}] [-p PINNUMBER] [-s] [-v] [-d] [-q]
+
+Control Fan using NPN transistor and Temperature Settings
+```
+optional arguments:
+  -h, --help            show this help message and exit
+  -f {on,off,auto}, --fanmode {on,off,auto}
+                        Fan Control modes. Valid values are on, off or auto
+  -p PINNUMBER, --pinnumber PINNUMBER
+                        Valid Fan BCM GPIO Control Pin Number (integer)
+  -s, --status          Checks Status of Fan and Temperature readings from
+                        pifand.service or Other Fan Control script.
+  -v, --verbose         Turn on verbose logging
+  -d, --debug           Add detailed fan and temp logging messages
+  -q, --quiet           Turn off verbose logging
+```
+
 ### pifand.py
 I wrote pifand.py to be used as a systemd service daemon.  The file can be run as a
 background task or installed as a systemd service per instructions below.

@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+# Import python libraries ...
+import os
+import sys
+import signal
+from time import sleep
+import RPi.GPIO as GPIO
 
 """
 pifand.py written by Claude Pageau:
@@ -7,15 +13,10 @@ Controls Raspberry Pi 5v case fan via GPIO control pin to NPN transistor.
 Turns fan on at setpoint_high and turns fan off at setpoint_low
 For details see https://github.com/pageauc/pifan
 """
-
-# Import python libraries ...
-import os
-from time import sleep
-import RPi.GPIO as GPIO
+prog_ver = 'ver 1.3'
 
 # User Variable Settings
 # ----------------------
-
 fan_GPIO = 25       # connect npn transistor center lead + resistor to this pin
 setpoint_high = 65  # deg C of fan os off turn it on at this temperature
 setpoint_low  = 55  # deg C if fan is on turn it off at this temperature
@@ -32,6 +33,10 @@ GPIO.setup(fan_GPIO, GPIO.OUT)  # sends signal to npn transistor center lead
 
 fan_on = False  # initialize fan status boolean
 GPIO.output(fan_GPIO, fan_on)  # make sure fan is off. overrides and previous setting
+
+def signal_term_handler(signal, frame):
+    GPIO.cleanup()
+    sys.exit(0)
 
 while True:     # Loop forever
     """
@@ -52,6 +57,7 @@ while True:     # Loop forever
         GPIO.output(fan_GPIO, True)  # send signal to NPN transistor to turn fan ON
         fan_on = True
 
+    signal.signal(signal.SIGTERM, signal_term_handler)
     try:
        sleep(sleep_sec)   # Wait before the next reading
     except KeyboardInterrupt:

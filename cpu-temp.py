@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 import os
 import time
+
 """
-Measure and report temperature of Raspberry Pi
+ Measure and report temperature of Raspberry Pi
 """
+prog_ver = 'ver 1.3'
+
 sleep_seconds = 5   # seconds between readings
 
 def measure_temp():
