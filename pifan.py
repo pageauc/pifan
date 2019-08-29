@@ -249,7 +249,7 @@ while True:     # Loop forever
         prog_exit(1)
 
     if fan_on and temp <= setpoint_low:
-        of verbose_on:
+        if verbose_on:
             logging.info("Turn Fan OFF .. {}'C setpoint_low reached."
                          .format(setpoint_low))
         GPIO.output(fan_GPIO, False)  # send signal to NPN transistor to turn fan OFF
