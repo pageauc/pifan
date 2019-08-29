@@ -1,43 +1,47 @@
 #!/usr/bin/env python
 # Import python libraries ...
+"""
+pifand.py written by Claude Pageau:
+
+Controls Raspberry Pi 5v case fan via GPIO control pin to NPN transistor.
+Turns fan on at SETPOINT_HIGH and turns fan off at setpoint_low
+For details see https://github.com/pageauc/pifan"""
+
+from __future__ import print_function
 import os
 import sys
 import signal
 from time import sleep
 import RPi.GPIO as GPIO
 
-"""
-pifand.py written by Claude Pageau:
-
-Controls Raspberry Pi 5v case fan via GPIO control pin to NPN transistor.
-Turns fan on at setpoint_high and turns fan off at setpoint_low
-For details see https://github.com/pageauc/pifan
-"""
-prog_ver = 'ver 1.3'
+PROG_VER = 'ver 1.5'
 
 # User Variable Settings
 # ----------------------
-fan_GPIO = 25       # connect npn transistor center lead + resistor to this pin
-setpoint_high = 65  # deg C of fan os off turn it on at this temperature
-setpoint_low  = 55  # deg C if fan is on turn it off at this temperature
-sleep_sec = 10      # seconds to wait between readings
+FAN_GPIO = 25       # connect npn transistor center lead + resistor to this pin
+SETPOINT_HIGH = 65  # deg C of fan os off turn it on at this temperature
+SETPOINT_LOW = 55  # deg C if fan is on turn it off at this temperature
+SLEEP_SEC = 10      # seconds to wait between readings
 # ----------------------
 
-vcgencmd_path = '/usr/bin/vcgencmd' # Path to command to retrieve temperature data
-vcgen_cmd = vcgencmd_path + ' measure_temp'
+VCGENCMD_PATH = '/usr/bin/vcgencmd' # Path to command to retrieve temperature data
+VCGEN_CMD = VCGENCMD_PATH + ' measure_temp'
 
-# Setup pin designated by fan_GPIO variable above
+# Setup pin designated by FAN_GPIO variable above
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)   # set mode for GPIO numbering scheme
-GPIO.setup(fan_GPIO, GPIO.OUT)  # sends signal to npn transistor center lead
+GPIO.setup(FAN_GPIO, GPIO.OUT)  # sends signal to npn transistor center lead
 
-fan_on = False  # initialize fan status boolean
-GPIO.output(fan_GPIO, fan_on)  # make sure fan is off. overrides and previous setting
+FAN_ON = False  # initialize fan status boolean
+GPIO.output(FAN_GPIO, FAN_ON)  # make sure fan is off. overrides and previous setting
 
-def signal_term_handler(signal, frame):
+def sigterm_handler(signal, frame):
+    """ Exit Gracefully on kill """
     GPIO.cleanup()
+    print('Killed Bye ...')
     sys.exit(0)
 
+signal.signal(signal.SIGTERM, sigterm_handler)
 while True:     # Loop forever
     """
     The /usr/bin/vcgencmd command reads current RPI temperature.
@@ -45,21 +49,19 @@ while True:     # Loop forever
     are problems, find path using command below then edit vcgen_cmd variable above
 
         which vcgencmd
-
     """
-    res = os.popen(vcgen_cmd).readline()  # read the latest temperature from file
-    temp = float((res.replace("temp=","").replace("'C\n","")))
+    TEMP_READING = os.popen(VCGEN_CMD).readline()  # read the latest temperature from file
+    CPU_TEMP = float((TEMP_READING.replace("temp=", "").replace("'C\n", "")))
 
-    if fan_on and temp <= setpoint_low:
-        GPIO.output(fan_GPIO, False)  # send signal to NPN transistor to turn fan OFF
-        fan_on = False
-    elif not fan_on and temp >= setpoint_high:
-        GPIO.output(fan_GPIO, True)  # send signal to NPN transistor to turn fan ON
-        fan_on = True
+    if FAN_ON and CPU_TEMP <= SETPOINT_LOW:
+        GPIO.output(FAN_GPIO, False)  # send signal to NPN transistor to turn fan OFF
+        FAN_ON = False
+    elif not FAN_ON and CPU_TEMP >= SETPOINT_HIGH:
+        GPIO.output(FAN_GPIO, True)  # send signal to NPN transistor to turn fan ON
+        FAN_ON = True
 
-    signal.signal(signal.SIGTERM, signal_term_handler)
     try:
-       sleep(sleep_sec)   # Wait before the next reading
+        sleep(SLEEP_SEC)   # Wait before the next reading
     except KeyboardInterrupt:
         print(' ')
         break
