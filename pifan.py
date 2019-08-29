@@ -184,8 +184,8 @@ if args.status:
         elif usage == 1:  # Set for GPIO.IN
             logging.warn('Fan Control is NOT Active. GPIO pin {} is NOT set as GPIO.OUT'
                          .format(fan_GPIO))
-            logging.info('Install/Start pifand.service or start fan control script pifan.py or pifand.py')
-            logging.info('eg sudo systemctl start pifand.service')
+            logging.warn('Install/Start pifand.service or start fan control script pifan.py or pifand.py')
+            logging.warm('eg sudo systemctl start pifand.service')
             break
     print('{} {}'.format(prog_name, prog_ver))
     print('Bye ...')
@@ -224,9 +224,8 @@ if force_fan_on:
 
 if not os.path.isfile(vcgencmd_path):
     logging.error('{} File Not Found.'.format(vcgencmd_path))
-    logging.info('    1 - Run which command below to locate file path')
-    logging.info('            which vcgencmd')
-    logging.info('    2 - nano Edit vcgencmd_path variable in this script per output')
+    logging.error('To Locate Path Run command: which vcgencmd')
+    logging.error('Then Edit vcgencmd_path variable in {}'.format(config_file_path))
     prog_exit(1)
 
 logging.info('Fan Temperature Control is Active.')
@@ -246,17 +245,19 @@ while True:     # Loop forever
         temp = float((res.replace("temp=","").replace("'C\n","")))
     except:
         logging.error('Could NOT read temperature with command {}'.format(vcgen_cmd))
-        logging.info('Please Investigate problem')
+        logging.error('Please Investigate problem')
         prog_exit(1)
 
     if fan_on and temp <= setpoint_low:
-        logging.info("Turn Fan OFF .. {}'C setpoint_low reached."
-                     .format(setpoint_low))
+        of verbose_on:
+            logging.info("Turn Fan OFF .. {}'C setpoint_low reached."
+                         .format(setpoint_low))
         GPIO.output(fan_GPIO, False)  # send signal to NPN transistor to turn fan OFF
         fan_on = False
     elif not fan_on and temp >= setpoint_high:
-        logging.info("Turn Fan ON ... {}'C setpoint_high reached."
-                     .format(setpoint_high))
+        if verbose_on:
+            logging.info("Turn Fan ON ... {}'C setpoint_high reached."
+                         .format(setpoint_high))
         GPIO.output(fan_GPIO, True)  # send signal to NPN transistor to turn fan ON
         fan_on = True
 
