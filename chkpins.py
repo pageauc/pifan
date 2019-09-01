@@ -2,12 +2,19 @@
 """
 demo of "gpio_function()" port test
 script by Alex Eames https://raspi.tv/?p=6805
+Modified by Claude Pageau
 """
 from __future__ import print_function
 import RPi.GPIO as GPIO
+import os
+import sys
+
+PROG_VER = '1.5'
+PROG_NAME = os.path.basename(__file__)
 
 # Offer the user a choice of Boare Pin
 # or BCM Port numbers and set numbering scheme accordingly
+print('{} ver {}'.format(PROG_NAME, PROG_VER))
 print("GPIO Port Status Listing")
 print("------------------------")
 print("1 - by Board Pin Number")
@@ -34,3 +41,8 @@ PORT_USE = {0:"GPIO.OUT", 1:"GPIO.IN", 40:"GPIO.SERIAL", 41:"GPIO.SPI",
 for port in PORTS:
     pin_usage = GPIO.gpio_function(port)
     print("%s %2d status: %s" % (PIN_TYPE, port, PORT_USE[pin_usage]))
+
+print('')
+print('{} ver {}'.format(PROG_NAME, PROG_VER))
+print('Bye ...')
+sys.exit(0)
