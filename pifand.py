@@ -16,6 +16,7 @@ from time import sleep
 import RPi.GPIO as GPIO
 
 PROG_VER = 'ver 1.5'
+PROG_NAME = os.path.basename(__file__)
 
 # User Variable Settings
 # ----------------------
@@ -39,11 +40,13 @@ GPIO.output(FAN_GPIO, FAN_ON)  # make sure fan is off. overrides and previous se
 def sigterm_handler(signal, frame):
     """ Exit Gracefully on kill """
     GPIO.cleanup()
-    print('Killed Bye ...')
+    print('WARN  : %s Received Kill' % PROG_NAME)
+    print('INFO  : Performed GPIO.cleanup.  Bye ...')
     sys.exit(0)
     
 # Setup signal to exit gracefully if a kill is send to this script
 signal.signal(signal.SIGTERM, sigterm_handler)
+
 while True:     # Loop forever
     """
     The /usr/bin/vcgencmd command reads current RPI temperature.
@@ -69,4 +72,5 @@ while True:     # Loop forever
         break
 
 GPIO.cleanup()
-print('Bye ...')
+print('%s Exited. Bye ...' % PROG_NAME)
+sys.exit(0)

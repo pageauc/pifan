@@ -1,5 +1,5 @@
 [Unit]
-Description=Run case cooling fan when RPI cpu gets hot
+Description=Run case cooling fan when RPI cpu gets Hot
 After=meadiacenter.service
 
 [Service]
