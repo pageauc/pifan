@@ -18,12 +18,10 @@ def measure_temp():
 
 def report_temp():
     """ print cpu temperature then sleep"""
-    timer = SLEEP_SECONDS
     while True:
-        for sec in reversed(range(1, SLEEP_SECONDS + 1)):
-            print("CPU at %s'C  Wait %i/%i sec ..." %
-                  (measure_temp(), sec, SLEEP_SECONDS))
-            time.sleep(1)
+        print("CPU at %s'C  Wait %i sec ..." %
+              (measure_temp(), SLEEP_SECONDS))
+        time.sleep(SLEEP_SECONDS)
 
 print('{} ver {}'.format(PROG_NAME, PROG_VER))
 print("Measuring RPI CPU Temperature Every %i seconds" % SLEEP_SECONDS)
