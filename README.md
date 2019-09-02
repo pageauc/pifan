@@ -17,7 +17,7 @@ An upgrade will not overwrite ***config.py*** file.
 Control a Raspberry 5v or 3.3v case cooling fan so it turns on
 at a high temperature setpoint and off at a lower temperature setpoint.
 This avoids running the fan when it is not required.  Might also help reduce
-dust bunnies collecting in RPI case if you do not have a lint filter over colling intake.
+dust bunnies collecting in RPI case if you do not have a lint filter over cooling intake.
 
 The pifan scripts utilizes an NPN transistor to switch fan power on and off based on temperature.
 Transistors can be ***S8050***, ***2N4401*** or equivalent plus approx ***100-300 ohm resistor***.
@@ -187,10 +187,11 @@ This is done to simplify script operations while running as service.  See Altern
 
 Edit the User Variable Settings as required then ctrl-x y to save and exit nano.
 
-***Alternative  Use pifan.py instead of pifand.py***
-Instead of ***pifand.py*** you can run ***pifan.py*** in the pifand.service file, since pifan.py can read
-variable settings from the ***config.py*** file.  This makes it handy to change settings if require, rather
-than having to edit the ***~/pifan/pifand.py*** file.
+***Alternative***
+Instead of using ***pifand.py*** you can run ***pifan.py -q*** in the pifand.service file.
+***pifan.py*** can read variables settings from the ***config.py*** file.  
+This makes it handy to change settings if require, rather than having to 
+edit the variables in the ***~/pifan/pifand.py*** file.
 
 ***NOTE:*** If ***pifan.py*** file is used in the ***pifand.service*** file,
 and a ***config.py*** file does not exist then the dictionary ***CONFIG_SETTINGS*** settings are used.
