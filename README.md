@@ -1,5 +1,5 @@
 # pifan
-### Control Raspberry Pi case fan on/off using CPU temperature
+### Control a Raspberry Pi case cooling fan on/off using CPU temperature
 
 ### Quick Install or Upgrade
 **IMPORTANT** - It is suggested you do a Raspbian ***sudo apt-get update*** and ***sudo apt-get upgrade***
@@ -11,22 +11,24 @@ before curl install
     curl -L https://raw.github.com/pageauc/pifan/master/pifan-install.sh | bash
 
 The command above will download and Run the GitHub ***pifan-install.sh*** script.
-An upgrade will not overwrite configuration files.
+An upgrade will not overwrite ***config.py*** file.
 
 ### Description
 Control a Raspberry 5v or 3.3v case cooling fan so it turns on
 at a high temperature setpoint and off at a lower temperature setpoint.
-This avoids running the fan when it is not required.  Might help reduce
-dust bunnies collecting in RPI case.
+This avoids running the fan when it is not required.  Might also help reduce
+dust bunnies collecting in RPI case if you do not have a lint filter over colling intake.
 
-The pifan scripts utilizes an NPN transistor to switch power fan on and off based on temperature.
-Transistors can be S8050, 2N4401 or equivalent plus approx 100-300 ohm resistor.  I had a variety
-and some are close to 300 ohms without problem.  I simply soldered the project together per the
-wiring diagram below and used two small shrink wraps to cover resistor solder connections and
+The pifan scripts utilizes an NPN transistor to switch fan power on and off based on temperature.
+Transistors can be ***S8050***, ***2N4401*** or equivalent plus approx ***100-300 ohm resistor***.
+I had a variety and some are close to 300 ohms and worked without problem.
+I simply soldered the project together per the wiring diagram below and used
+two small shrink wraps to cover resistor solder connections and
 the second for one fan connection wire solder connection.
 I then used one larger shrink wrap to encase the capacitor and all three soldered wires to insulate them.
+Electrical tape can also be used.
 
-On the pifan.py script I did some extra programming as a learning excercise. The extra features are
+On the ***pifan.py*** script I did some extra programming as a learning excercise. The extra features are
 not necessary for operation but I enjoyed adding them. This script can be used for testing operation.
 
 ### Wiring Details
@@ -103,7 +105,7 @@ Both do the same job but pifand.py is very minimalistic.
 
 ### Testing
 To test, connect the soldered NPN transistor assembly to the appropriate pins.
-power off the RPI just to be safe then connect the soldered NPN transistor assembly per the following.
+***NOTE***: Power OFF the RPI just to be safe, then connect the soldered NPN transistor assembly per the following.
 
 * Red fan wire to 5v GPIO pin 4
 * Black NPN ground wire to GPIO pin 5
@@ -113,7 +115,7 @@ With the RPI running, open an ssh or terminal session and start the pifan.py scr
 
     cd ~/pifan
     ./pifan.py -h   # display parameter options
-    ./pifan.py -d   # Note. -v mode just display message when fan turns ON or OFF
+    ./pifan.py -d   # Note. -v mode just displays message when fan turns ON or OFF at setpoints
 
 Debug mode will display the temperature and fan status every 10 seconds by default.
 You can change variable settings in config.py per comments using nano editor.
@@ -122,8 +124,8 @@ Open a second ssh or terminal session. In order to increase the RPI temperature
 you will need to run a program to stress the cpu. Install and run stress per the
 following commands.
 
-    sudo apt-get install -y stress
-    stress -c 4   # runs quad core cpu's at 100%
+    sudo apt-get install -y stress     # Installed as part of github curl install
+    stress -c 4   # runs quad core cpu's at 100% or -c 2 for dual core
 
 In the first terminal session you should see temperature rise. Fan should turn ON
 at 65'C or greater. If not check connections and possibly solder joints.
@@ -144,18 +146,68 @@ terminal sessionby running and running htop per command below
 
 type q or cntrl-c to exit htop
 
+To check GPIO pin status while pifan.py is running you can run
+
+    ./chkpins.py
+
+select 1 for display by board pin order or 2 or enter for BCM GPIO order.
+If pifan.py or pifand.py are running then you should see a GPIO.OUT on the
+fan control pin (default BCM GPIO pin 25 or Board pin 22)
+
 If everything runs OK you can install pifand.py as a systemd service.
 
 ### How to Manually Create a pifand Systemd Service
 
-#### Step 1
-A template copy of the pifand.service is downloaded with github curl install of pifan-install.sh
+#### Step 1 Checks
+Check that ***/usr/bin/vcgencmd*** command reads current RPI temperature per.
+
+    /usr/bin/vcgencmd measure_temp
+
+This should return the current cpu temperature.
+
+If there is a problem, find path to ***vcgencmd*** using command below.
+
+    which vcgencmd
+
+If it is Not ***/usr/bin/vcgencmd*** Then nano edit ***config.py***
+and ***pifand.py*** change ***VCGENCMD_PATH=*** variable
+
+Check that pifand.service file ***ExecStart=*** entry is correct path and settings.
+
+    cd ~/pifand
+    more pifand.service
+
+Change file pifand.service settings using nano if required.
+
+Check that ***pifand.py*** variable settings are correct and change if required.
+***NOTE:*** variables are hard coded in pifand.py and do NOT read config.py settings.
+This is done to simplify script operations while running as service.  See Alternative Below.
+
+    nano pifand.py
+
+Edit the User Variable Settings as required then ctrl-x y to save and exit nano.
+
+***Alternative  Use pifan.py instead of pifand.py***
+Instead of ***pifand.py*** you can run ***pifan.py*** in the pifand.service file, since pifan.py can read
+variable settings from the ***config.py*** file.  This makes it handy to change settings if require, rather
+than having to edit the ***~/pifan/pifand.py*** file.
+
+***NOTE:*** If ***pifan.py*** file is used in the ***pifand.service*** file,
+and a ***config.py*** file does not exist then the dictionary ***CONFIG_SETTINGS*** settings are used.
+
+    cd ~/pifan
+    nano pifand.service
+
+In nano change ***ExecStart=/usr/bin/python /home/pi/pifan/pifan.py -q*** then ctr-x y to save and exit
+
+#### Step 2
+A template copy of the ***pifand.service*** is downloaded with github curl install of ***pifan-install.sh***
 To install this copy perform the following
 
     cd ~/pifan
     sudo cp pifand.service /lib/systemd/system/pifand.service
 
-Progress to Step 2
+Progress to Step 3
 
 or
 
@@ -163,34 +215,37 @@ To manually Create or Edit the systemd pifand.service file use command below
 
     sudo nano /lib/systemd/system/pifand.service
 
-If ***/lib/systemd/system/pifand.service*** file is blank Cut/Paste or Add text as shown below (does not need to be indented).
+If ***/lib/systemd/system/pifand.service*** file is blank Cut/Paste or Add text as shown below
+(does not need to be indented).
 
-    [Unit]
-    Description=run fan when hot
-    After=meadiacenter.service
+```
+[Unit]
+Description=run fan when hot
+After=meadiacenter.service
 
-    [Service]
-    User=root
-    Group=root
-    Type=simple
-    ExecStart=/usr/bin/python /home/pi/pifan/pifand.py
-    Restart=Always
-    # On OSMC use Restart=on-failure instead of Restart=Always
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/bin/python /home/pi/pifan/pifand.py
+Restart=Always
+# On OSMC use Restart=on-failure instead of Restart=Always
 
-    [Install]
-    WantedBy=multi-user.target
+[Install]
+WantedBy=multi-user.target
+```
 
-ctrl-o, ENTER, ctrl-x to save and exit the nano editor
+ctrl-x y to save file and exit the nano editor
 
-#### Step 2
-After any changes to /lib/systemd/system/pifand.service file,
+#### Step 3
+After any changes to ***/lib/systemd/system/pifand.service*** file,
 execute commands below
 
     sudo systemctl daemon-reload
     sudo systemctl enable pifand.service
     sudo reboot
 
-#### Step 3
+#### Step 4
 Ensure the pifand.service in systemd is enabled and running, per commands below
 
     systemctl list-unit-files | grep enabled | grep pifand
@@ -204,14 +259,30 @@ then examine the journal using commands below
 
 ### cpu-temp.py
 If you have pifand.py running as a systemd service or background task,
-you can check the RPI temperature using the cpu-temp.py script per
+you can check the RPI temperature using the ***cpu-temp.py*** script per
 
     cd ~/pifan
     ./cpu-temp.py
 
-This will display the temperature every 5 seconds by default.  To change delay edit
-cpu-temp.py using nano and change the ***sleep_seconds*** variable.  ctl-x y to save and exit
+This will display the temperature every 5 seconds by default.
+To change delay edit the ***cpu-temp.py*** file using nano.
 
-Post an [issue](https://github.com/pageauc/pifan/issues) to github repo if you need help.
+    cd ~/pifan
+    nano cpu-temp.py
 
-Good Luck ...
+Then change the ***sleep_seconds*** variable.  ctl-x y to save and exit
+
+Alternatively you can check fan and temperature status by running the following
+command
+
+    cd ~/pifan
+    ./pifan.py -s
+
+***NOTE:*** If the fan control pin is not enabled then ***pifan.py*** ***-s*** will
+display a warning message and exit.
+
+### Get Help
+
+Post an [issue](https://github.com/pageauc/pifan/issues) to github pifan repo if you need help.
+
+Claude ....

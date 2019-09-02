@@ -5,7 +5,8 @@ pifand.py written by Claude Pageau:
 
 Controls Raspberry Pi 5v case fan via GPIO control pin to NPN transistor.
 Turns fan on at SETPOINT_HIGH and turns fan off at setpoint_low
-For details see https://github.com/pageauc/pifan"""
+For details see https://github.com/pageauc/pifan
+"""
 
 from __future__ import print_function
 import os
@@ -40,7 +41,8 @@ def sigterm_handler(signal, frame):
     GPIO.cleanup()
     print('Killed Bye ...')
     sys.exit(0)
-
+    
+# Setup signal to exit gracefully if a kill is send to this script
 signal.signal(signal.SIGTERM, sigterm_handler)
 while True:     # Loop forever
     """
