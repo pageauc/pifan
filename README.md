@@ -187,7 +187,7 @@ This is done to simplify script operations while running as service.  See Altern
 
 Edit the User Variable Settings as required then ctrl-x y to save and exit nano.
 
-##### Alternative
+#### Alternative
 Instead of using ***pifand.py*** you can run ***pifan.py -q*** in the pifand.service file.
 ***pifan.py*** can read variables settings from the ***config.py*** file.  
 This makes it handy to change settings if require, rather than having to 
