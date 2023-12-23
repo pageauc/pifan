@@ -22,10 +22,9 @@ dust bunnies collecting in RPI case if you do not have a lint filter over coolin
 The pifan scripts utilizes an NPN transistor to switch fan power on and off based on temperature.
 Transistors can be ***S8050***, ***2N4401*** or equivalent plus approx ***100-300 ohm resistor***.
 I had a variety and some are close to 300 ohms and worked without problem.
-I simply soldered the project together per the wiring diagram below and used
-two small shrink wraps to cover resistor solder connections and
-the second for one fan connection wire solder connection.
-I then used one larger shrink wrap to encase the capacitor and all three soldered wires to insulate them.
+I simply soldered the project together using short coloured famale jumper wires per the wiring diagram below and used
+two small shrink wraps to cover resistor solder connections and the second for one fan connection wire solder connection.
+I then used one larger shrink wrap to encase the transistor, resistor and all three soldered jumper wires to insulate them.
 Electrical tape can also be used.
 
 On the ***pifan.py*** script I did some extra programming as a learning excercise. The extra features are
